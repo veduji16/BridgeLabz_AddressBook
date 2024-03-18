@@ -60,13 +60,6 @@ public class AddressBookMain {
         System.out.println("\n...Welcome to Address Book Program...\n");
 
         List<Contact> addressBook = new ArrayList<>();
-        Contact johnDoe = new Contact("John", "Doe", "123 Main St", "Anytown", "CA", "12345", "555-123-4567",
-                "john.doe@example.com");
-        addressBook.add(johnDoe);
-
-        System.out.println("Added contact:");
-        System.out.println(johnDoe);
-
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -81,7 +74,6 @@ public class AddressBookMain {
             sc.nextLine();
 
             switch (choice) {
-
                 case 1:
                     System.out.println("\nEnter details for a new contact:");
                     System.out.print("First Name: ");
@@ -164,6 +156,7 @@ public class AddressBookMain {
                         System.out.println(contact);
                     }
                     break;
+
                 case 5:
                     System.out.println("\nExiting...");
                     sc.close();
