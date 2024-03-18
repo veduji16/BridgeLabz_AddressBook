@@ -2,6 +2,7 @@ package AddressBook;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 class Contact {
     private String firstName;
@@ -27,15 +28,15 @@ class Contact {
 
     @Override
     public String toString() {
-        return "Contact: { " +
-                "firstName:'" + firstName + '\'' +
-                ", lastName:'" + lastName + '\'' +
-                ", address:'" + address + '\'' +
-                ", city:'" + city + '\'' +
-                ", state:'" + state + '\'' +
-                ", zip:'" + zip + '\'' +
-                ", phoneNumber:'" + phoneNumber + '\'' +
-                ", email:'" + email + '\'' +
+        return "Contact{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zip='" + zip + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
@@ -52,5 +53,34 @@ public class AddressBookMain {
 
         System.out.println("Added contact:");
         System.out.println(johnDoe);
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\nEnter details for a new contact:");
+        System.out.print("First Name: ");
+        String newFirstName = sc.nextLine();
+        System.out.print("Last Name: ");
+        String newLastName = sc.nextLine();
+        System.out.print("Address: ");
+        String newAddress = sc.nextLine();
+        System.out.print("City: ");
+        String newCity = sc.nextLine();
+        System.out.print("State: ");
+        String newState = sc.nextLine();
+        System.out.print("ZIP Code: ");
+        String newZip = sc.nextLine();
+        System.out.print("Phone Number: ");
+        String newPhoneNumber = sc.nextLine();
+        System.out.print("Email: ");
+        String newEmail = sc.nextLine();
+
+        Contact newContact = new Contact(newFirstName, newLastName, newAddress, newCity, newState, newZip,
+                newPhoneNumber, newEmail);
+        addressBook.add(newContact);
+
+        System.out.println("\nUpdated address book:");
+        for (Contact contact : addressBook) {
+            System.out.println(contact);
+        }
+        sc.close();
     }
 }
