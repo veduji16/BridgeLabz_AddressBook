@@ -103,10 +103,9 @@ class Contact {
     }
 }
 
+
 public class AddressBookMain {
     private static Map<String, List<Contact>> addressBooks = new HashMap<>();
-    private static Map<String, List<Contact>> cityToPersons = new HashMap<>();
-    private static Map<String, List<Contact>> stateToPersons = new HashMap<>();
 
     public static void main(String[] args) {
         System.out.println("\n...Welcome to Address Book Program...\n");
@@ -120,9 +119,9 @@ public class AddressBookMain {
             System.out.println("3. Update a contact");
             System.out.println("4. Delete a contact");
             System.out.println("5. Display all contacts in an address book");
-            System.out.println("6. View persons by city");
-            System.out.println("7. View persons by state");
-            System.out.println("8. Search persons by city or state");
+            System.out.println("6. Sort contacts by City");
+            System.out.println("7. Sort contacts by State");
+            System.out.println("8. Sort contacts by Zip");
             System.out.println("9. Exit");
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
@@ -150,15 +149,15 @@ public class AddressBookMain {
                     break;
 
                 case 6:
-                    viewPersonsByCity(sc);
+                    sortContactsByCity(sc);
                     break;
 
                 case 7:
-                    viewPersonsByState(sc);
+                    sortContactsByState(sc);
                     break;
 
                 case 8:
-                    searchByCityOrState(sc);
+                    sortContactsByZip(sc);
                     break;
 
                 case 9:
@@ -209,7 +208,6 @@ public class AddressBookMain {
         Contact newContact = new Contact(newFirstName, newLastName, newAddress, newCity, newState, newZip,
                 newPhoneNumber, newEmail);
         selectedBook.add(newContact);
-        addContactToDictionaries(newContact);
         System.out.println("\nNew contact added successfully!");
     }
 
@@ -269,7 +267,6 @@ public class AddressBookMain {
                 Contact contact = deleteAddressBook.get(i);
                 if (contact.getFirstName().equalsIgnoreCase(deleteFirstName)) {
                     deleteAddressBook.remove(i);
-                    removeContactFromDictionaries(contact);
                     contactDeleted = true;
                     break;
                 }
@@ -289,87 +286,52 @@ public class AddressBookMain {
         if (displayAddressBook == null) {
             System.out.println("\nAddress book not found.");
         } else {
-            System.out.println("\nContacts in Address Book '" + displayAddressBookName + "' sorted by name:");
-            displayAddressBook.stream()
-                    .sorted(Comparator.comparing(Contact::getFirstName))
+            System.out.println("\nContacts in Address Book '" + displayAddressBookName + "':");
+            for (Contact contact : displayAddressBook) {
+                System.out.println(contact);
+            }
+        }
+    }
+
+    private static void sortContactsByCity(Scanner sc) {
+        System.out.print("\nEnter the name of the address book to sort contacts by City: ");
+        String addressBookName = sc.nextLine();
+        List<Contact> addressBook = addressBooks.get(addressBookName);
+        if (addressBook == null) {
+            System.out.println("\nAddress book not found.");
+        } else {
+            System.out.println("\nContacts in Address Book '" + addressBookName + "' sorted by City:");
+            addressBook.stream()
+                    .sorted(Comparator.comparing(Contact::getCity))
                     .forEach(System.out::println);
         }
     }
 
-    private static void viewPersonsByCity(Scanner sc) {
-        System.out.print("\nEnter the city to view persons: ");
-        String city = sc.nextLine();
-        List<Contact> persons = cityToPersons.get(city);
-        if (persons == null || persons.isEmpty()) {
-            System.out.println("\nNo persons found in the city: " + city);
+    private static void sortContactsByState(Scanner sc) {
+        System.out.print("\nEnter the name of the address book to sort contacts by State: ");
+        String addressBookName = sc.nextLine();
+        List<Contact> addressBook = addressBooks.get(addressBookName);
+        if (addressBook == null) {
+            System.out.println("\nAddress book not found.");
         } else {
-            System.out.println("\nPersons in the city '" + city + "':");
-            for (Contact person : persons) {
-                System.out.println(person);
-            }
+            System.out.println("\nContacts in Address Book '" + addressBookName + "' sorted by State:");
+            addressBook.stream()
+                    .sorted(Comparator.comparing(Contact::getState))
+                    .forEach(System.out::println);
         }
     }
 
-    private static void viewPersonsByState(Scanner sc) {
-        System.out.print("\nEnter the state to view persons: ");
-        String state = sc.nextLine();
-        List<Contact> persons = stateToPersons.get(state);
-        if (persons == null || persons.isEmpty()) {
-            System.out.println("\nNo persons found in the state: " + state);
+    private static void sortContactsByZip(Scanner sc) {
+        System.out.print("\nEnter the name of the address book to sort contacts by Zip: ");
+        String addressBookName = sc.nextLine();
+        List<Contact> addressBook = addressBooks.get(addressBookName);
+        if (addressBook == null) {
+            System.out.println("\nAddress book not found.");
         } else {
-            System.out.println("\nPersons in the state '" + state + "':");
-            for (Contact person : persons) {
-                System.out.println(person);
-            }
+            System.out.println("\nContacts in Address Book '" + addressBookName + "' sorted by Zip:");
+            addressBook.stream()
+                    .sorted(Comparator.comparing(Contact::getZip))
+                    .forEach(System.out::println);
         }
-    }
-
-    private static void searchByCityOrState(Scanner sc) {
-        System.out.print("\nEnter the city or state to search: ");
-        String query = sc.nextLine();
-        int cityCount = getContactCountByCity(query);
-        int stateCount = getContactCountByState(query);
-        if (cityCount == 0 && stateCount == 0) {
-            System.out.println("\nNo matching contacts found.");
-        } else {
-            System.out.println("\nSearch Results for '" + query + "':");
-            System.out.println("Number of contacts in city '" + query + "': " + cityCount);
-            System.out.println("Number of contacts in state '" + query + "': " + stateCount);
-        }
-    }
-
-    private static int getContactCountByCity(String city) {
-        List<Contact> persons = cityToPersons.get(city);
-        return (persons != null) ? persons.size() : 0;
-    }
-
-    private static int getContactCountByState(String state) {
-        List<Contact> persons = stateToPersons.get(state);
-        return (persons != null) ? persons.size() : 0;
-    }
-
-    private static void addToDictionary(Map<String, List<Contact>> dictionary, String key, Contact contact) {
-        List<Contact> contacts = dictionary.getOrDefault(key, new ArrayList<>());
-        contacts.add(contact);
-        dictionary.put(key, contacts);
-    }
-
-    private static void removeFromDictionary(Map<String, List<Contact>> dictionary, String key, Contact contact) {
-        List<Contact> contacts = dictionary.get(key);
-        if (contacts != null) {
-            contacts.remove(contact);
-            if (contacts.isEmpty()) {
-                dictionary.remove(key);
-            }
-        }
-    }
-    private static void addContactToDictionaries(Contact contact) {
-        addToDictionary(cityToPersons, contact.getCity(), contact);
-        addToDictionary(stateToPersons, contact.getState(), contact);
-    }
-
-    private static void removeContactFromDictionaries(Contact contact) {
-        removeFromDictionary(cityToPersons, contact.getCity(), contact);
-        removeFromDictionary(stateToPersons, contact.getState(), contact);
     }
 }
