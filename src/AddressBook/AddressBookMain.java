@@ -1,10 +1,6 @@
 package AddressBook;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 class Contact {
     private String firstName;
@@ -40,6 +36,22 @@ class Contact {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Contact contact = (Contact) obj;
+        return firstName.equals(contact.firstName) &&
+                lastName.equals(contact.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName);
     }
 
     public void updateContact(String newAddress, String newCity, String newState, String newZip, String newPhoneNumber,
@@ -93,11 +105,21 @@ public class AddressBookMain {
                         System.out.println("\nAddress book not found.");
                         break;
                     }
+
                     System.out.println("\nEnter details for a new contact:");
                     System.out.print("First Name: ");
                     String newFirstName = sc.nextLine();
                     System.out.print("Last Name: ");
                     String newLastName = sc.nextLine();
+
+                    // Check for duplicate entry
+                    Contact newContact = new Contact(newFirstName, newLastName, "", "", "", "", "", "");
+                    if (selectedBook.contains(newContact)) {
+                        System.out.println("\nDuplicate entry! This contact already exists.");
+                        break;
+                    }
+
+                    // If not a duplicate, proceed to add the contact
                     System.out.print("Address: ");
                     String newAddress = sc.nextLine();
                     System.out.print("City: ");
@@ -110,7 +132,7 @@ public class AddressBookMain {
                     String newPhoneNumber = sc.nextLine();
                     System.out.print("Email: ");
                     String newEmail = sc.nextLine();
-                    Contact newContact = new Contact(newFirstName, newLastName, newAddress, newCity, newState, newZip,
+                    newContact = new Contact(newFirstName, newLastName, newAddress, newCity, newState, newZip,
                             newPhoneNumber, newEmail);
                     selectedBook.add(newContact);
                     System.out.println("\nNew contact added successfully!");
