@@ -122,7 +122,8 @@ public class AddressBookMain {
             System.out.println("5. Display all contacts in an address book");
             System.out.println("6. View persons by city");
             System.out.println("7. View persons by state");
-            System.out.println("8. Exit");
+            System.out.println("8. Search persons by city or state");
+            System.out.println("9. Exit");
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
             sc.nextLine();
@@ -157,6 +158,10 @@ public class AddressBookMain {
                     break;
 
                 case 8:
+                    searchByCityOrState(sc);
+                    break;
+
+                case 9:
                     System.out.println("\nExiting...");
                     sc.close();
                     System.exit(0);
@@ -319,6 +324,30 @@ public class AddressBookMain {
         }
     }
 
+    private static void searchByCityOrState(Scanner sc) {
+        System.out.print("\nEnter the city or state to search: ");
+        String query = sc.nextLine();
+        int cityCount = getContactCountByCity(query);
+        int stateCount = getContactCountByState(query);
+        if (cityCount == 0 && stateCount == 0) {
+            System.out.println("\nNo matching contacts found.");
+        } else {
+            System.out.println("\nSearch Results for '" + query + "':");
+            System.out.println("Number of contacts in city '" + query + "': " + cityCount);
+            System.out.println("Number of contacts in state '" + query + "': " + stateCount);
+        }
+    }
+
+    private static int getContactCountByCity(String city) {
+        List<Contact> persons = cityToPersons.get(city);
+        return (persons != null) ? persons.size() : 0;
+    }
+
+    private static int getContactCountByState(String state) {
+        List<Contact> persons = stateToPersons.get(state);
+        return (persons != null) ? persons.size() : 0;
+    }
+
     private static void addToDictionary(Map<String, List<Contact>> dictionary, String key, Contact contact) {
         List<Contact> contacts = dictionary.getOrDefault(key, new ArrayList<>());
         contacts.add(contact);
@@ -334,7 +363,6 @@ public class AddressBookMain {
             }
         }
     }
-
     private static void addContactToDictionaries(Contact contact) {
         addToDictionary(cityToPersons, contact.getCity(), contact);
         addToDictionary(stateToPersons, contact.getState(), contact);
