@@ -289,10 +289,10 @@ public class AddressBookMain {
         if (displayAddressBook == null) {
             System.out.println("\nAddress book not found.");
         } else {
-            System.out.println("\nContacts in Address Book '" + displayAddressBookName + "':");
-            for (Contact contact : displayAddressBook) {
-                System.out.println(contact);
-            }
+            System.out.println("\nContacts in Address Book '" + displayAddressBookName + "' sorted by name:");
+            displayAddressBook.stream()
+                    .sorted(Comparator.comparing(Contact::getFirstName))
+                    .forEach(System.out::println);
         }
     }
 
