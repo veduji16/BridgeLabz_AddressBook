@@ -24,6 +24,70 @@ class Contact {
         this.email = email;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "Contact{" +
@@ -36,36 +100,6 @@ class Contact {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        Contact contact = (Contact) obj;
-        return firstName.equals(contact.firstName) &&
-                lastName.equals(contact.lastName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName);
-    }
-
-    public void updateContact(String newAddress, String newCity, String newState, String newZip, String newPhoneNumber,
-                              String newEmail) {
-        this.address = newAddress;
-        this.city = newCity;
-        this.state = newState;
-        this.zip = newZip;
-        this.phoneNumber = newPhoneNumber;
-        this.email = newEmail;
-    }
-
-    public String getFirstName() {
-        return firstName;
     }
 }
 
@@ -84,7 +118,8 @@ public class AddressBookMain {
             System.out.println("3. Update a contact");
             System.out.println("4. Delete a contact");
             System.out.println("5. Display all contacts in an address book");
-            System.out.println("6. Exit");
+            System.out.println("6. Search for a person in a city or state");
+            System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
             sc.nextLine();
@@ -112,14 +147,12 @@ public class AddressBookMain {
                     System.out.print("Last Name: ");
                     String newLastName = sc.nextLine();
 
-                    // Check for duplicate entry
                     Contact newContact = new Contact(newFirstName, newLastName, "", "", "", "", "", "");
                     if (selectedBook.contains(newContact)) {
                         System.out.println("\nDuplicate entry! This contact already exists.");
                         break;
                     }
 
-                    // If not a duplicate, proceed to add the contact
                     System.out.print("Address: ");
                     String newAddress = sc.nextLine();
                     System.out.print("City: ");
@@ -163,8 +196,12 @@ public class AddressBookMain {
                                 String updatedPhoneNumber = sc.nextLine();
                                 System.out.print("Email: ");
                                 String updatedEmail = sc.nextLine();
-                                contact.updateContact(updatedAddress, updatedCity, updatedState, updatedZip,
-                                        updatedPhoneNumber, updatedEmail);
+                                contact.setAddress(updatedAddress);
+                                contact.setCity(updatedCity);
+                                contact.setState(updatedState);
+                                contact.setZip(updatedZip);
+                                contact.setPhoneNumber(updatedPhoneNumber);
+                                contact.setEmail(updatedEmail);
                                 System.out.println("\nContact updated successfully!");
                                 contactFound = true;
                                 break;
@@ -217,6 +254,20 @@ public class AddressBookMain {
                     break;
 
                 case 6:
+                    System.out.print("\nEnter city or state to search: ");
+                    String searchQuery = sc.nextLine();
+                    List<Contact> searchResults = searchInAddressBooks(addressBooks, searchQuery);
+                    if (searchResults.isEmpty()) {
+                        System.out.println("\nNo matching contacts found in any address book.");
+                    } else {
+                        System.out.println("\nSearch Results for '" + searchQuery + "':");
+                        for (Contact contact : searchResults) {
+                            System.out.println(contact);
+                        }
+                    }
+                    break;
+
+                case 7:
                     System.out.println("\nExiting...");
                     sc.close();
                     System.exit(0);
@@ -226,5 +277,17 @@ public class AddressBookMain {
                     System.out.println("Invalid choice");
             }
         }
+    }
+
+    private static List<Contact> searchInAddressBooks(Map<String, List<Contact>> addressBooks, String query) {
+        List<Contact> searchResults = new ArrayList<>();
+        for (List<Contact> contacts : addressBooks.values()) {
+            for (Contact contact : contacts) {
+                if (contact.getCity().equalsIgnoreCase(query) || contact.getState().equalsIgnoreCase(query)) {
+                    searchResults.add(contact);
+                }
+            }
+        }
+        return searchResults;
     }
 }
